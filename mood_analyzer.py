@@ -1,4 +1,6 @@
 # mood_analyzer.py
+from email.mime import text
+import re
 """
 Rule based mood analyzer for short text snippets.
 
@@ -54,7 +56,11 @@ class MoodAnalyzer:
         """
         cleaned = text.strip().lower()
         tokens = cleaned.split()
+        text = re.sub(r'(.)\1{2,}', r'\1\1', text)
 
+        tokens = re.findall(r'\b\w+\b|[^\w\s]', text)
+
+        print("Tokens:", tokens)  # for debugging
         return tokens
 
     # ---------------------------------------------------------------------
@@ -83,7 +89,27 @@ class MoodAnalyzer:
         #
         # Hint: if you implement negation, you may want to look at pairs of tokens,
         # like ("not", "happy") or ("never", "fun").
-        pass
+        EMOJI_POSITIVE = {"🙂", "😊", "😎", "🥰", "😂", "🎉"}
+        EMOJI_NEGATIVE = {"😩", "😒", "😤", "💀"}
+        NEGATIONS = {"not", "no", "never", "can't", "don't", "dont"}
+
+        tokens = self.preprocess(text)
+        score = 0
+        negate = False
+
+        for token in tokens:
+            if token in NEGATIONS:
+                negate = True
+                continue
+
+            if token in self.positive_words or token in EMOJI_POSITIVE:
+                score += -1 if negate else 1
+                negate = False
+            elif token in self.negative_words or token in EMOJI_NEGATIVE:
+                score += 1 if negate else -1
+                negate = False
+
+        return score
 
     # ---------------------------------------------------------------------
     # Label prediction
@@ -110,7 +136,16 @@ class MoodAnalyzer:
         #   2. Return "positive" if the score is above 0.
         #   3. Return "negative" if the score is below 0.
         #   4. Return "neutral" otherwise.
-        pass
+        score = self.score_text(text)
+
+        if score > 1:
+          return "positive"
+        elif score < -1:
+            return "negative"
+        elif score == 0:
+            return "neutral"
+        else:
+            return "mixed"
 
     # ---------------------------------------------------------------------
     # Explanations (optional but recommended)
@@ -139,12 +174,19 @@ class MoodAnalyzer:
         score = 0
 
         for token in tokens:
-            if token in self.positive_words:
-                positive_hits.append(token)
-                score += 1
-            if token in self.negative_words:
-                negative_hits.append(token)
-                score -= 1
+          if token in self.positive_words:
+              positive_hits.append(token)
+              score += 1
+          elif token in self.negative_words:
+              negative_hits.append(token)
+              score -= 1
+          # emojis
+          elif token in {"🙂", "😊", "😎", "🥰", "😂", "🎉"}:
+              positive_hits.append(token)
+              score += 1
+          elif token in {"😩", "😒", "😤", "💀"}:
+              negative_hits.append(token)
+              score -= 1
 
         return (
             f"Score = {score} "

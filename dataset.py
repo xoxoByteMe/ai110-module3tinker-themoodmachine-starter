@@ -24,6 +24,7 @@ POSITIVE_WORDS = [
     "relaxed",
     "amazing",
 ]
+POSITIVE_WORDS += ["yay", "sick", "fire", "lol", "lit", "proud"]
 
 NEGATIVE_WORDS = [
     "sad",
@@ -37,6 +38,8 @@ NEGATIVE_WORDS = [
     "hate",
     "boring",
 ]
+
+NEGATIVE_WORDS += ["ugh", "meh", "stuck", "worst", "annoyed", "💀"]
 
 # ---------------------------------------------------------------------
 # Starter labeled dataset
@@ -68,7 +71,7 @@ TRUE_LABELS = [
 ]
 
 # TODO: Add 5-10 more posts and labels.
-#
+
 # Requirements:
 #   - For every new post you add to SAMPLE_POSTS, you must add one
 #     matching label to TRUE_LABELS.
@@ -92,3 +95,23 @@ TRUE_LABELS = [
 #
 # Remember to keep them aligned:
 #   len(SAMPLE_POSTS) == len(TRUE_LABELS)
+# Slang, emojis, sarcasm, mixed emotions
+SAMPLE_POSTS += [
+    "Ugh, Mondays are the worst 😩 but at least coffee exists ☕",  # mixed
+    "Just got a promotion! Finally feels like my hard work paid off 😎🎉",  # positive
+    "I love this show… not. Total waste of time 😒",  # sarcastic negative
+    "Feeling meh today, nothing really exciting",  # negative
+    "That surprise party yesterday made me so happy 🥰",  # positive
+    "Why does everything have to be so complicated? 😤",  # negative
+    "OMG this meme literally made me laugh out loud 😂😂",  # positive
+]
+
+TRUE_LABELS += [
+    "mixed",
+    "positive",
+    "negative",
+    "negative",
+    "positive",
+    "negative",
+    "positive",
+]
